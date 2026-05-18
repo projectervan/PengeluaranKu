@@ -16,7 +16,12 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["user_id"])]
+    indices = [
+        Index(value = ["user_id"]),
+        Index(value = ["date"]),
+        Index(value = ["type"]),
+        Index(value = ["user_id", "type", "date"])
+    ]
 )
 data class TransactionEntity(
     @PrimaryKey
@@ -43,4 +48,13 @@ data class TransactionEntity(
 
     @ColumnInfo(name = "is_recurring_generated")
     val isRecurringGenerated: Boolean = false
+)
+
+/**
+ * Data class for aggregate query result: expense grouped by category.
+ * Used for Pie Chart on Dashboard.
+ */
+data class CategoryExpense(
+    val category: String,
+    val totalAmount: Double
 )
