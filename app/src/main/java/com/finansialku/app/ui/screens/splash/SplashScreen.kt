@@ -10,22 +10,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SplashScreen(
     onNavigateToLogin: () -> Unit,
-    onNavigateToMain: () -> Unit
+    onNavigateToMain: () -> Unit,
+    viewModel: SplashViewModel = hiltViewModel()
 ) {
-    // TODO: Check Firebase Auth session to decide navigation
-    LaunchedEffect(Unit) {
-        delay(1500L)
-        // For now, always navigate to login
-        onNavigateToLogin()
+    val destination by viewModel.destination.collectAsState()
+
+    LaunchedEffect(destination) {
+        when (destination) {
+            is SplashDestination.Login -> onNavigateToLogin()
+            is SplashDestination.Main -> onNavigateToMain()
+            is SplashDestination.Loading -> { /* Still loading, show splash UI */ }
+        }
     }
 
     Column(

@@ -19,6 +19,13 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // TODO: Replace with your actual Web Client ID from Firebase Console
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"YOUR_WEB_CLIENT_ID_HERE.apps.googleusercontent.com\""
+        )
     }
 
     buildTypes {
@@ -42,6 +49,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
