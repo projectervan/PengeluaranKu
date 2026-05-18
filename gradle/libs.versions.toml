@@ -1,11 +1,11 @@
 [versions]
-agp = "8.5.0"
-kotlin = "2.0.0"
-ksp = "2.0.0-1.0.22"
+agp = "8.3.0"
+kotlin = "1.9.22"
+ksp = "1.9.22-1.0.17"
 coreKtx = "1.13.1"
 lifecycleRuntime = "2.8.2"
 activityCompose = "1.9.0"
-composeBom = "2024.06.00"
+composeBom = "2024.02.02"
 navigationCompose = "2.7.7"
 roomVersion = "2.6.1"
 hiltVersion = "2.51.1"
@@ -74,7 +74,6 @@ androidx-room-testing = { group = "androidx.room", name = "room-testing", versio
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
