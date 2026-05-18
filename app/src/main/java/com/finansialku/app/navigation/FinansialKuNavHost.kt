@@ -17,15 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.finansialku.app.ui.screens.dashboard.DashboardScreen
 import com.finansialku.app.ui.screens.login.LoginScreen
 import com.finansialku.app.ui.screens.recurringbills.RecurringBillsScreen
 import com.finansialku.app.ui.screens.settings.SettingsScreen
 import com.finansialku.app.ui.screens.splash.SplashScreen
+import com.finansialku.app.ui.screens.transactions.AddEditTransactionScreen
 import com.finansialku.app.ui.screens.transactions.TransactionsScreen
 
 @Composable
@@ -62,13 +66,19 @@ fun FinansialKuNavHost() {
         }
 
         composable(Screen.Main.route) {
-            MainScreen()
+            MainScreen(
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Main.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onLogout: () -> Unit = {}) {
     val navController = rememberNavController()
     val bottomNavItems = listOf(
         BottomNavItem.Dashboard,
@@ -79,30 +89,37 @@ fun MainScreen() {
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            val currentRoute = currentDestination?.route
 
-                bottomNavItems.forEach { item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = getIconForNavItem(item),
-                                contentDescription = item.title
-                            )
-                        },
-                        label = { Text(item.title) },
-                        selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            // Hide bottom bar on add/edit transaction screen
+            val showBottomBar = currentRoute != Screen.AddTransaction.route &&
+                    currentRoute != Screen.EditTransaction.route
+
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomNavItems.forEach { item ->
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    imageVector = getIconForNavItem(item),
+                                    contentDescription = item.title
+                                )
+                            },
+                            label = { Text(item.title) },
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -116,13 +133,39 @@ fun MainScreen() {
                 DashboardScreen()
             }
             composable(BottomNavItem.Transactions.route) {
-                TransactionsScreen()
+                TransactionsScreen(
+                    onNavigateToAddTransaction = {
+                        navController.navigate(Screen.AddTransaction.route)
+                    },
+                    onNavigateToEditTransaction = { transactionId ->
+                        navController.navigate(Screen.EditTransaction.createRoute(transactionId))
+                    }
+                )
             }
             composable(BottomNavItem.RecurringBills.route) {
                 RecurringBillsScreen()
             }
             composable(BottomNavItem.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(onLogout = onLogout)
+            }
+
+            // Add Transaction
+            composable(Screen.AddTransaction.route) {
+                AddEditTransactionScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Edit Transaction
+            composable(
+                route = Screen.EditTransaction.route,
+                arguments = listOf(
+                    navArgument("transactionId") { type = NavType.StringType }
+                )
+            ) {
+                AddEditTransactionScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
         }
     }
