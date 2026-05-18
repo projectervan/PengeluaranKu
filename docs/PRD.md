@@ -145,3 +145,31 @@ FUNGSI checkAndGenerateRecurringBills(current_user_id):
                 SET last_generated_month = current_month, last_generated_year = current_year
                 WHERE id = tagihan.id
 ```
+
+---
+
+## 6. PEDOMAN UI/UX & DESAIN ANTARMUKA
+
+AI Agent harus mengikuti struktur hierarki halaman berikut dengan gaya **Material Design 3**:
+
+### 6.1 Splash & Login Screen
+Bersih, logo aplikasi di tengah, tombol Google Login dengan gaya resmi Google Brand.
+
+### 6.2 Main Navigation (Bottom Navigation Bar)
+
+| Tab | Nama | Deskripsi |
+| :--- | :--- | :--- |
+| Tab 1 | **Dashboard** | Ringkasan saldo, chart, dan riwayat singkat. |
+| Tab 2 | **Transaksi** | List lengkap semua transaksi dengan filter bulan/tahun dan tombol FAB (Floating Action Button) "+" untuk tambah data. |
+| Tab 3 | **Tagihan Rutin** | Daftar pengeluaran rutin terencana beserta statusnya. |
+| Tab 4 | **Pengaturan** | Informasi akun Google, tombol Logout, tombol Hapus Semua Data Lokal. |
+
+### 6.3 Warna Tema
+
+| Elemen | Warna | Kode Hex |
+| :--- | :--- | :--- |
+| Pemasukan (Income) | Hijau Emerald desaturasi | `#2E7D32` |
+| Pengeluaran (Expense) | Merah Karang | `#C62828` |
+| Latar Belakang | Abu-abu terang / putih bersih | — |
+
+Dominasi warna gelap atau pastel yang tenang untuk keseluruhan tampilan aplikasi.
