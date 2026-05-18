@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finansialku.app.data.entity.UserEntity
 import com.finansialku.app.data.repository.AuthRepository
+import com.finansialku.app.data.repository.RecurringBillRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ data class LoginUiState(
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val recurringBillRepository: RecurringBillRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -29,6 +31,8 @@ class LoginViewModel @Inject constructor(
 
     /**
      * Initiate Google Sign-In flow.
+     * After successful login, also triggers checkAndGenerateRecurringBills (PRD 5.1).
+     *
      * @param context Activity context (required for Credential Manager)
      * @param webClientId OAuth 2.0 Web Client ID from Firebase Console
      */
@@ -40,6 +44,9 @@ class LoginViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = { user ->
+                    // After login success, run auto-generation of recurring bills
+                    recurringBillRepository.checkAndGenerateRecurringBills(user.id)
+
                     _uiState.value = LoginUiState(
                         isLoading = false,
                         isSuccess = true,
